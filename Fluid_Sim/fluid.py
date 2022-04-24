@@ -168,11 +168,32 @@ if __name__ == "__main__":
 
         inst = Fluid()
 
+        newFile = open('settings.txt','r')
+        lines = newFile.readlines()
+
         def update_im(i):
-            # We add new density creators in here
-            inst.density[14:17, 14:17] += 100  # add density into a 3*3 square
-            # We add velocity vector values in here
-            inst.velo[20, 20] = [-2, -2]
+            for line in lines:
+                if(line[0:2]== "1V"):
+                    x,y,a,b = 0
+                    inst.velo[x,y] = [a,b]
+                elif(line[0:2]== "2V"):
+                    x,y,a,b = 0
+                    inst.velo[x,y] = [2*math.cos(a),3*math.sin(2*b)]
+                
+                elif(line[0:2]== "3V"):
+                    x,y,a,b = 0
+                    inst.velo[x,y] = [3*math.cos(a),2*math.sin(b)]
+                
+                elif(line[0]== "D"):
+                    x1,x2,y1,y2,density = 0
+                    inst.density[x1:x2, y1:y2] += density
+                
+                elif(line[0]== "F"):
+                    x1, x2, y1, y2 = 0
+                    for x in range(x1, x2):
+                        for y in range(y1, y2):
+                            inst.density[x, y] = 0
+                            inst.velo[x, y] = 0
             inst.step()
             im.set_array(inst.density)
             q.set_UVC(inst.velo[:, :, 1], inst.velo[:, :, 0])
