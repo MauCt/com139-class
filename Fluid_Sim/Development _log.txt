@@ -1,0 +1,12 @@
+Task 1:
+For the first task I read the file and took the values directly from the settings.txt file. A loop then takes the velocities, density or the figures to apply them.
+I had a little trouble putting a good format to the settings in the file. In the end, I decided to use the same format used in the example when giving the values to the variables.
+
+Task 2:
+In this task I simply made 3 different types of velocities. The first one is a normal one and in the other 2 I used the sin and cos function of the math library to create a simple behavior for both of them.
+
+Task 3:
+The solution for this task was very simple! The imshow function has a parameter called cmap and that changes the colors of the animation. I created a simple menu using a while loop to give the user 3 options of cmap you can use. The user takes an option and I send the answer to the imshow function.
+
+Task 4:
+The data of the figure is given by the user in the settings file and the program gets the data in the same loop we get the velocity and the density. The difference here is that both the velocity and density are equal to zero in the coordinates of the figure.
