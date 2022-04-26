@@ -169,6 +169,29 @@ if __name__ == "__main__":
         from matplotlib.colors import LinearSegmentedColormap
         import re
 
+        def readFile(lines):
+            for line in lines:
+                if(line[0:2]== "1V"):
+                    x,y,a,b = getVelocityDataFromLine(line)
+                    inst.velo[x,y] = [a,b]
+                elif(line[0:2]== "2V"):
+                    x,y,a,b = getVelocityDataFromLine(line)
+                    inst.velo[x,y] = [2*math.cos(a),3*math.sin(2*b)]
+                
+                elif(line[0:2]== "3V"):
+                    x,y,a,b = getVelocityDataFromLine(line)
+                    inst.velo[x,y] = [3*math.cos(a),2*math.sin(b)]
+                
+                elif(line[0]== "D"):
+                    x1,x2,y1,y2,density = getDensityDataFromLine(line)
+                    inst.density[x1:x2, y1:y2] += density
+                
+                elif(line[0]== "F"):
+                    x1, x2, y1, y2 = getFigureData(line)
+                    for x in range(x1, x2):
+                        for y in range(y1, y2):
+                            inst.density[x, y] = 0
+                            inst.velo[x, y] = 0
 
         def getVelocityDataFromLine(line):
             temp = line[8:].split("|")
@@ -200,29 +223,7 @@ if __name__ == "__main__":
         lines = newFile.readlines()
 
         def update_im(i):
-            for line in lines:
-                if(line[0:2]== "1V"):
-                    x,y,a,b = getVelocityDataFromLine(line)
-                    inst.velo[x,y] = [a,b]
-                elif(line[0:2]== "2V"):
-                    x,y,a,b = getVelocityDataFromLine(line)
-                    inst.velo[x,y] = [2*math.cos(a),3*math.sin(2*b)]
-                
-                elif(line[0:2]== "3V"):
-                    x,y,a,b = getVelocityDataFromLine(line)
-                    inst.velo[x,y] = [3*math.cos(a),2*math.sin(b)]
-                
-                elif(line[0]== "D"):
-                    x1,x2,y1,y2,density = getDensityDataFromLine(line)
-                    inst.density[x1:x2, y1:y2] += density
-                
-                elif(line[0]== "F"):
-                    x1, x2, y1, y2 = getFigureData(line)
-                    for x in range(x1, x2):
-                        for y in range(y1, y2):
-                            inst.density[x, y] = 0
-                            inst.velo[x, y] = 0
-
+            readFile(lines)
             inst.step()
             im.set_array(inst.density)
             q.set_UVC(inst.velo[:, :, 1], inst.velo[:, :, 0])
