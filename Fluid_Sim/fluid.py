@@ -4,6 +4,7 @@ and the mike ash vulgarization https://mikeash.com/pyblog/fluid-simulation-for-d
 
 https://github.com/Guilouf/python_realtime_fluidsim
 """
+from turtle import color
 import numpy as np
 import math
 
@@ -22,7 +23,7 @@ class Fluid:
 
         self.diff = 0.0000  # Diffusion
         self.visc = 0.0000  # viscosity
-
+        self.color = "Spectral"
         self.s = np.full((self.size, self.size), 0, dtype=float)        # Previous density
         self.density = np.full((self.size, self.size), 0, dtype=float)  # Current density
 
@@ -165,7 +166,34 @@ if __name__ == "__main__":
     try:
         import matplotlib.pyplot as plt
         from matplotlib import animation
+        from matplotlib.colors import LinearSegmentedColormap
+        import re
 
+
+        def getVelocityDataFromLine(line):
+            temp = line[8:].split("|")
+            temp[0] = re.sub(r'[()]', '', temp[0])
+            x, y = temp[0].split(",")
+            velocity = temp[1].split("=")
+            velocity[1] = re.sub(r'[()]', '', velocity[1])
+            a, b = velocity[1].split(",")
+            return int(x), int(y), int(a), int(b)
+
+        def getDensityDataFromLine(line):
+            temp = line[15:].split("|")
+            temp[0] = re.sub(r'[()]', '', temp[0])
+            x, y = temp[0].split(",")
+            x1, x2 = x.split(":")
+            y1, y2 = y.split(":")
+            density = temp[1].split("=")
+            return int(x1), int(x2), int(y1), int(y2), int(density[1])
+        
+        def getFigureData(line):
+            temp = re.sub(r'[()]', '', line[15:])
+            x, y = temp.split(",")
+            x1, x2 = x.split(":")
+            y1, y2 = y.split(":")
+            return int(x1), int(x2), int(y1), int(y2)
         inst = Fluid()
 
         newFile = open('settings.txt','r')
@@ -174,26 +202,27 @@ if __name__ == "__main__":
         def update_im(i):
             for line in lines:
                 if(line[0:2]== "1V"):
-                    x,y,a,b = 0
+                    x,y,a,b = getVelocityDataFromLine(line)
                     inst.velo[x,y] = [a,b]
                 elif(line[0:2]== "2V"):
-                    x,y,a,b = 0
+                    x,y,a,b = getVelocityDataFromLine(line)
                     inst.velo[x,y] = [2*math.cos(a),3*math.sin(2*b)]
                 
                 elif(line[0:2]== "3V"):
-                    x,y,a,b = 0
+                    x,y,a,b = getVelocityDataFromLine(line)
                     inst.velo[x,y] = [3*math.cos(a),2*math.sin(b)]
                 
                 elif(line[0]== "D"):
-                    x1,x2,y1,y2,density = 0
+                    x1,x2,y1,y2,density = getDensityDataFromLine(line)
                     inst.density[x1:x2, y1:y2] += density
                 
                 elif(line[0]== "F"):
-                    x1, x2, y1, y2 = 0
+                    x1, x2, y1, y2 = getFigureData(line)
                     for x in range(x1, x2):
                         for y in range(y1, y2):
                             inst.density[x, y] = 0
                             inst.velo[x, y] = 0
+
             inst.step()
             im.set_array(inst.density)
             q.set_UVC(inst.velo[:, :, 1], inst.velo[:, :, 0])
@@ -201,14 +230,33 @@ if __name__ == "__main__":
             im.autoscale()
 
         fig = plt.figure()
-
         # plot density
-        im = plt.imshow(inst.density, vmax=100, interpolation='bilinear')
+        menu = False
+        newColor = ""
+        while(menu == False):
+            print("What color scheme do you want? a)Spectral  b)coolwarm   c)PiYG ")
+            val = input("Answer:  ")
+
+            if(val == 'a'):
+                newColor = "Spectral"
+                menu = True
+            
+            elif(val =='b'):
+                newColor = "coolwarm"
+                menu = True
+
+            elif(val =='c'):
+                newColor = "PiYG"
+                menu = True
+
+
+
+        im = plt.imshow(inst.density,cmap=newColor, vmax=100, interpolation='bilinear')
 
         # plot vector field
         q = plt.quiver(inst.velo[:, :, 1], inst.velo[:, :, 0], scale=10, angles='xy')
         anim = animation.FuncAnimation(fig, update_im, interval=0)
-        # anim.save("movie.mp4", fps=30, extra_args=['-vcodec', 'libx264'])
+        anim.save("movie1.mp4", fps=30, extra_args=['-vcodec', 'libx264'])
         plt.show()
 
     except ImportError:
