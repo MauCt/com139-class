@@ -236,7 +236,7 @@ if __name__ == "__main__":
         newColor = ""
         while(menu == False):
             print("What color scheme do you want? a)Spectral  b)coolwarm   c)PiYG ")
-            val = input("Answer:  ")
+            val = input("Answer: ")
 
             if(val == 'a'):
                 newColor = "Spectral"
