@@ -10,3 +10,14 @@ The solution for this task was very simple! The imshow function has a parameter 
 
 Task 4:
 The data of the figure is given by the user in the settings file and the program gets the data in the same loop we get the velocity and the density. The difference here is that both the velocity and density are equal to zero in the coordinates of the figure.
+
+Note: 1V,2V and 3V have different animation/motions.
+
+settings.txt format:
+You just need to change YOUR SETTINGS with the number you want to send.
+
+V_1(YOUR SETTING,YOUR SETTING)|v=(YOUR SETTING,YOUR SETTING)
+V_2(YOUR SETTING,YOUR SETTING)|v=(YOUR SETTING,YOUR SETTING)
+V_3(YOUR SETTING,YOUR SETTING)|v=(YOUR SETTING,YOUR SETTING)
+D(x1:x2,y1:y2)=(YOUR SETTING:YOUR SETTING,YOUR SETTING:YOUR SETTING)|density=YOUR SETTING
+F(x1:x2,y1:y2)=(YOUR SETTING:YOUR SETTING,YOUR SETTING:YOUR SETTING)

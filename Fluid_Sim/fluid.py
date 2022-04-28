@@ -171,30 +171,30 @@ if __name__ == "__main__":
 
         def readFile(lines):
             for line in lines:
-                if(line[0:2]== "1V"):
-                    x,y,a,b = getVelocityDataFromLine(line)
+                if(line[0:3]== "V_1"):
+                    x,y,a,b = getVelocity(line)
                     inst.velo[x,y] = [a,b]
-                elif(line[0:2]== "2V"):
-                    x,y,a,b = getVelocityDataFromLine(line)
-                    inst.velo[x,y] = [2*math.cos(a),3*math.sin(2*b)]
+                elif(line[0:3]== "V_2"):
+                    x,y,a,b = getVelocity(line)
+                    inst.velo[x,y] = [a*math.sin(.4*a),a*math.cos(.4*b)]
                 
-                elif(line[0:2]== "3V"):
-                    x,y,a,b = getVelocityDataFromLine(line)
+                elif(line[0:3]== "V_3"):
+                    x,y,a,b = getVelocity(line)
                     inst.velo[x,y] = [3*math.cos(a),2*math.sin(b)]
                 
                 elif(line[0]== "D"):
-                    x1,x2,y1,y2,density = getDensityDataFromLine(line)
+                    x1,x2,y1,y2,density = getDensity(line)
                     inst.density[x1:x2, y1:y2] += density
                 
                 elif(line[0]== "F"):
-                    x1, x2, y1, y2 = getFigureData(line)
+                    x1, x2, y1, y2 = getFigure(line)
                     for x in range(x1, x2):
                         for y in range(y1, y2):
                             inst.density[x, y] = 0
                             inst.velo[x, y] = 0
 
-        def getVelocityDataFromLine(line):
-            temp = line[8:].split("|")
+        def getVelocity(line):
+            temp = line[3:].split("|")
             temp[0] = re.sub(r'[()]', '', temp[0])
             x, y = temp[0].split(",")
             velocity = temp[1].split("=")
@@ -202,7 +202,7 @@ if __name__ == "__main__":
             a, b = velocity[1].split(",")
             return int(x), int(y), int(a), int(b)
 
-        def getDensityDataFromLine(line):
+        def getDensity(line):
             temp = line[15:].split("|")
             temp[0] = re.sub(r'[()]', '', temp[0])
             x, y = temp[0].split(",")
@@ -211,7 +211,7 @@ if __name__ == "__main__":
             density = temp[1].split("=")
             return int(x1), int(x2), int(y1), int(y2), int(density[1])
         
-        def getFigureData(line):
+        def getFigure(line):
             temp = re.sub(r'[()]', '', line[15:])
             x, y = temp.split(",")
             x1, x2 = x.split(":")
@@ -276,4 +276,4 @@ if __name__ == "__main__":
             flu.step()
             video[step] = flu.density
 
-        imageio.mimsave('./video.gif', video.astype('uint8'))
+        #imageio.mimsave('./video.gif', video.astype('uint8'))
